@@ -16,9 +16,8 @@ app.use(express.json());
 
 
 const corsOptions = {
-        // origin: "*",
-        origin: "http://localhost:5173",
-        // origin: "https://www.graspguide.com",
+        origin: "*",
+        // origin: "http://localhost:5173",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
         credentials: true
   };
