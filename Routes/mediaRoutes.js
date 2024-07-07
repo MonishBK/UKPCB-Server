@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Authenticate = require("../middlewares/authenticate")
-const {upload, uploadFiles} = require('../Components/uploadFiles')
+const {upload} = require('../middlewares/uploadFiles')
 
 const {addMedia, deleteMedia, ViewMedia} = require('../Controllers/MediaControllers')
 
 
 
 // Upload multiple files
-router.post('/upload/e-files', upload.array("files", 10), uploadFiles);
-
-// add file
-router.post('/update/media-file', Authenticate, addMedia);
+router.post('/update/media-file', upload.array("files", 10), addMedia);
 
 // delete file
 router.delete('/delete-media-file', Authenticate, deleteMedia);

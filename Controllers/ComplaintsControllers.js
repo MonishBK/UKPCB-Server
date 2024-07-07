@@ -1,10 +1,43 @@
 const Complaints = require('../models/ComplaintsSchema')
+const {validExtensions} = require('../middlewares/uploadFiles')
 
 const addComplaints = async (req, res) => {
     try {
-        const { subject, Name, Email, Phone } = req.body;
 
-        const data = new Complaints({ subject, Name, Email, Phone });
+        const uploadedFiles = req.files;
+        
+        if (!uploadedFiles || uploadedFiles.length === 0) {
+            return res.status(400).json({ error: 'No files were uploaded.' });
+        }
+  
+        // console.log("Files Uploaded successfully:", uploadedFiles); 
+        const { subject, Name, Email, Phone, complaint } = req.body;
+        let files = []
+
+        uploadedFiles.map((ele, ind) => {
+            
+            const fileExtension = ele.originalname.split('.').pop().toLowerCase();
+            let fileType = null;
+      
+            // Find the file type based on the extension
+            for (const [type, extensions] of Object.entries(validExtensions)) {
+                if (extensions.includes(fileExtension)) {
+                    fileType = type;
+                    break;
+                }
+            }
+
+            const fileFormat = {
+                name: uploadedFiles.filename,
+                href:`/assets/${fileType}/${uploadedFiles.filename}`,
+                type: fileType
+            }
+
+            files.push(fileFormat)
+
+        })
+
+        const data = new Complaints({ subject, Name, Email, Phone, complaint, files });
         await data.save()
         res.status(201).json({ message: "Added successfully" });
 

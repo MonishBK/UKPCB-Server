@@ -1,14 +1,48 @@
 const Media = require('../models/mediaSchema')
 const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
+const {validExtensions} = require('../middlewares/uploadFiles')
 
 
   const addMedia = async (req, res) => {
     try {
-        const { name, description, data } = req.body;
 
-        const mediaData = new Media({ name, description, data });
-        await mediaData.save()
+        const uploadedFiles = req.files;
+        
+        if (!uploadedFiles || uploadedFiles.length === 0) {
+            return res.status(400).json({ error: 'No files were uploaded.' });
+        }
+  
+        // console.log("Files Uploaded successfully:", uploadedFiles); 
+        const { name, description, media_names } = req.body;
+        let files = []
+
+        uploadedFiles.map((ele, ind) => {
+            
+            const fileExtension = ele.originalname.split('.').pop().toLowerCase();
+            let fileType = null;
+      
+            // Find the file type based on the extension
+            for (const [type, extensions] of Object.entries(validExtensions)) {
+                if (extensions.includes(fileExtension)) {
+                    fileType = type;
+                    break;
+                }
+            }
+
+            const fileFormat = {
+                name: media_names[ind],
+                href:`/assets/${fileType}/${uploadedFiles.filename}`,
+                type: fileType
+            }
+
+            files.push(fileFormat)
+
+        })
+
+        
+        const data = new Media({ name, description, data:files });
+        await data.save()
         res.status(201).json({ message: "Added successfully" });
 
     } catch (err) {
@@ -57,7 +91,7 @@ const deleteMedia = async (req, res) => {
 const ViewMedia = async (req, res) => {
     try {
         // Find and sort the main menu items by the 'order' field
-        const data = await Media.find();
+        const data = await Media.find().sort({ createdAt: -1 });
 
         res.status(200).json({ data });
     } catch (error) {

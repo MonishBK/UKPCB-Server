@@ -1,5 +1,23 @@
 const mongoose = require("mongoose");
 
+const fileDataSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    href: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    type: {
+        type: String,
+        required: true,
+        trim: true,
+    }
+});
+
 const enquiriesSchema = new mongoose.Schema({
     subject: {
         type: String,
@@ -21,6 +39,13 @@ const enquiriesSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    enquiry: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    files: [fileDataSchema],
+
     Seen_date: {
         type: String,
         default: null,
@@ -31,7 +56,7 @@ const enquiriesSchema = new mongoose.Schema({
         trim: true,
         default: null
     },
-    createdOn: {
+    createdAt: {
         type: String,
         default: new Date().toLocaleString(),
     },

@@ -58,4 +58,4 @@ const validExtensions = {
   }
 
 
-  module.exports = {upload, uploadFiles};
+  module.exports = {upload, uploadFiles, validExtensions};

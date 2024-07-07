@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Authenticate = require("../middlewares/authenticate")
-const {upload} = require('../Components/uploadFiles')
+const {upload} = require('../middlewares/uploadFiles')
 const {addBanner, deleteBanner, ViewBanner} = require('../Controllers/BannerControllers')
 
 

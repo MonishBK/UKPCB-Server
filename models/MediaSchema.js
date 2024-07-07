@@ -28,7 +28,11 @@ const mediaSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-    data: [mediaDataSchema]
+    data: [mediaDataSchema],
+    createdAt: {
+        type: String,
+        default: new Date().toLocaleString(),
+    },
 });
 
 const Media = mongoose.model('MEDIA', mediaSchema);

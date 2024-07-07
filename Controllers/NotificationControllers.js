@@ -1,6 +1,7 @@
 const File = require('../models/FileSchema')
 const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
+const {validExtensions}= require('../middlewares/uploadFiles')
 
 
   const addNotification = async (req, res) => {
@@ -11,7 +12,7 @@ const path = require('path');
             return res.status(400).json({ error: 'No files were uploaded.' });
         }
   
-        console.log("Files Uploaded successfully:", uploadedFiles); 
+        // console.log("Files Uploaded successfully:", uploadedFiles); 
         const { Module, title, Publish_Date, names } = req.body;
         let files = []
 
@@ -44,8 +45,6 @@ const path = require('path');
         await data.save()
         res.status(201).json({ message: "Added successfully" });
 
-
-        res.status(201).json({ message: 'Success!!' });
     } catch (err) {
         console.log(err);
         res.status(422).json({ error: 'Oops some thing went wrong' });
@@ -122,7 +121,7 @@ const deleteNotification = async (req, res) => {
 const ViewNotifications = async (req, res) => {
     try {
         // Find and sort the main menu items by the 'order' field
-        const data = await File.find();
+        const data = await File.find().sort({ createdAt: -1 });
 
         res.status(200).json({ data });
     } catch (error) {

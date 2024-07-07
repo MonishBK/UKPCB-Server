@@ -34,7 +34,12 @@ const NotificationSchema = new mongoose.Schema({
       required: true,
       trim:true,
     },
-    files: [fileDataSchema]
+    files: [fileDataSchema],
+    
+    createdAt: {
+      type: String,
+      default: new Date().toLocaleString(),
+  },
        
   });
 
