@@ -49,9 +49,11 @@ const addComplaints = async (req, res) => {
 
 const updateComplaintsSeen = async (req, res) => {
     try {
-        const { _id, seen_date } = req.body;
+        const { _id } = req.body;
+        const currentDate = new Date();
+        const dateWithoutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
-        const data = await Complaints.findByIdAndUpdate(_id, { seen_date }, {new: true});
+        const data = await Complaints.findByIdAndUpdate(_id, { seen_date: dateWithoutTime }, {new: true});
         res.status(201).json({ message: "seen date updated successfully" });
 
     } catch (err) {
@@ -62,9 +64,12 @@ const updateComplaintsSeen = async (req, res) => {
 
 const updateComplaintsRespondedDate = async (req, res) => {
     try {
-        const { _id, responded_date } = req.body;
+        const { _id } = req.body;
 
-        const data = await Complaints.findByIdAndUpdate(_id, { responded_date }, {new: true});
+        const currentDate = new Date();
+        const dateWithoutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
+        const data = await Complaints.findByIdAndUpdate(_id, { responded_date: dateWithoutTime }, {new: true});
         res.status(201).json({ message: "responded date updated successfully" });
 
     } catch (err) {
@@ -96,8 +101,10 @@ const updateComplaintsNote = async (req, res) => {
 
 const updateComplaintStatus = async (req, res) => {
     try {
-        const { _id, status, date } = req.body;
+        const { _id, status } = req.body;
 
+        const currentDate = new Date();
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
         // Update fields based on status
         let updateFields = { status };
 

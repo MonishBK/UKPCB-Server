@@ -61,24 +61,20 @@ const enquiriesSchema = new mongoose.Schema({
     files: [fileDataSchema],
 
     seen_date: {
-        type: String,
+        type: Date,
         default: null,
-        trim: true,
     },
     responded_date: {
-        type: String,
-        trim: true,
-        default: null
+        type: Date,
+        default: null,
     },
     progress_date: {
-        type: String,
-        trim: true,
-        default: null
+        type: Date,
+        default: null,
     },
     resolve_date: {
-        type: String,
-        trim: true,
-        default: null
+        type: Date,
+        default: null,
     },
     action_notes: [actionNoteSchema],
     status: {
