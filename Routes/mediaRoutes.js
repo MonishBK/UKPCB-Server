@@ -8,7 +8,7 @@ const {addMedia, deleteMedia, ViewMedia} = require('../Controllers/MediaControll
 
 
 // Upload multiple files
-router.post('/update/media-file', upload.array("files", 10), addMedia);
+router.post('/update/media-file', upload.array("files", 10), Authenticate, addMedia);
 
 // delete file
 router.delete('/delete-media-file', Authenticate, deleteMedia);

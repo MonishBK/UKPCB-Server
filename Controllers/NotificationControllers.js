@@ -47,7 +47,7 @@ const {validExtensions}= require('../middlewares/uploadFiles')
 
     } catch (err) {
         console.log(err);
-        res.status(422).json({ error: 'Oops some thing went wrong' });
+        res.status(500).json({ error: 'Oops some thing went wrong' });
     }
 };
 
@@ -86,7 +86,7 @@ const deleteNotificationFiles = async (req, res) => {
         res.status(200).json({ message: 'Files deleted successfully', notification: notificationDoc });
     } catch (err) {
         console.log(err);
-        res.status(422).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -113,7 +113,7 @@ const deleteNotification = async (req, res) => {
         res.status(200).json({ message: 'Notification and associated files deleted successfully' });
     } catch (err) {
         console.log(err);
-        res.status(422).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -125,7 +125,7 @@ const ViewNotifications = async (req, res) => {
 
         res.status(200).json({ data });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 

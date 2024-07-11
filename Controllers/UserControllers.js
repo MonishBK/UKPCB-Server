@@ -27,7 +27,7 @@ const registerUser  = async (req, res) =>{
 
     } catch (err) {
         // console.log(err);
-        return res.status(422).json({error : "Oops something went wrong"});
+        return res.status(500).json({error : "Oops something went wrong"});
     }
 }
 
@@ -78,7 +78,7 @@ const signInUser = async (req, res) =>{
 
     } catch (err) {
         // console.log(err);
-        res.status(422).json({ error :"Oops something went wrong"});
+        res.status(500).json({ error :"Oops something went wrong"});
     }
 }
 
@@ -96,7 +96,7 @@ const logOutUser = async (req, res) =>{
 
     } catch (err) {
         console.log(err)
-        res.status(422).json({ error : "user Logout Unsuccessfully!!..", });
+        res.status(500).json({ error : "user Logout Unsuccessfully!!..", });
 
     }
 }
@@ -113,7 +113,7 @@ const LoutOutAllDevicesUser = async (req, res) => {
         res.status(200).json({ message : "user Logout successfully!!..", });
 
     } catch (error) {
-        res.status(422).json({ error : "user Logout Unsuccessfully!!..", });
+        res.status(500).json({ error : "user Logout Unsuccessfully!!..", });
 
     }
 } 
@@ -124,7 +124,7 @@ const updateEmailUser = async (req, res) =>{
         const {email} = req.body;
 
         if(!email.trim()){
-            return res.status(422).json({error : "Plz fill the field"});
+            return res.status(500).json({error : "Plz fill the field"});
         }
         // console.log("after inside")
         const UserExist = await User.findOne({email});
@@ -140,7 +140,7 @@ const updateEmailUser = async (req, res) =>{
         // console.log("email Updated successfully")
     } catch (err) {
         // console.log(err);
-        res.status(422).json({error: "oops something went wrong!!.."})
+        res.status(500).json({error: "oops something went wrong!!.."})
     }
 }
 
@@ -166,7 +166,7 @@ const updateNumberUser = async (req, res) =>{
         // console.log("number Updated successfully")
     } catch (err) {
         // console.log(err);
-        res.status(422).json({error: "oops something went wrong!!.."})
+        res.status(500).json({error: "oops something went wrong!!.."})
     }
 }
 
@@ -196,7 +196,7 @@ const UpdatePasswordUser = async (req, res) =>{
         }
     } catch (err) {
         // console.log(err);
-        res.status(422).json({error: "oops something went wrong!!.."})
+        res.status(500).json({error: "oops something went wrong!!.."})
     }
 }
 
@@ -232,7 +232,7 @@ const deleteUserAccount = async (req, res) =>{
 
     }catch(err){
         // console.log(err);
-        res.status(422).json({error: "oops something went wrong!!.."})
+        res.status(500).json({error: "oops something went wrong!!.."})
     }
 }
 

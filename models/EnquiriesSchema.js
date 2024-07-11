@@ -3,38 +3,52 @@ const mongoose = require("mongoose");
 const fileDataSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
         trim: true,
     },
     href: {
         type: String,
-        required: true,
         trim: true,
     },
     type: {
         type: String,
-        required: true,
         trim: true,
     }
 });
 
+
+const actionNoteSchema = new mongoose.Schema({
+    status: {
+        type: String,
+        trim: true,
+    },
+    note: {
+        type: String,
+        trim: true,
+    }
+},{ timestamps: true } );
+
+
 const enquiriesSchema = new mongoose.Schema({
+    enquiryId: {
+        type: String,
+        unique: true
+    },
     subject: {
         type: String,
         required: true,
         trim: true,
     },
-    Name: {
+    name: {
         type: String,
         required: true,
         trim: true,
     },
-    Email: {
+    email: {
         type: String,
         required: true,
         trim: true,
     },
-    Phone: {
+    phone: {
         type: String,
         required: true,
         trim: true,
@@ -46,22 +60,54 @@ const enquiriesSchema = new mongoose.Schema({
     },
     files: [fileDataSchema],
 
-    Seen_date: {
+    seen_date: {
         type: String,
         default: null,
         trim: true,
     },
-    Responded_date: {
+    responded_date: {
         type: String,
         trim: true,
         default: null
     },
-    createdAt: {
+    progress_date: {
         type: String,
-        default: new Date().toLocaleString(),
+        trim: true,
+        default: null
     },
+    resolve_date: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    action_notes: [actionNoteSchema],
+    status: {
+        type: String,
+        trim: true,
+        default: "new"
+    }
+},{ timestamps: true } );
+
+
+enquiriesSchema.pre('save', async function (next) {
+    try {
+        if (!this.enquiryId) {
+            // Generate enquiryId if it doesn't exist
+            const lastEnquiry = await Enquiries.findOne({}, {}, { sort: { 'createdAt': -1 } });
+            let count = 1;
+            if (lastEnquiry && lastEnquiry.enquiryId) {
+                const lastNumber = parseInt(lastEnquiry.enquiryId.substring(7)); // Extract numeric part
+                count = lastNumber + 1;
+            }
+            this.enquiryId = `UKPCBEQ${count.toString().padStart(3, '0')}`;
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 const Enquiries = mongoose.model('ENQUIRIE', enquiriesSchema);
 
 module.exports = Enquiries;
+

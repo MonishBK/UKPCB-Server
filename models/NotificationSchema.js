@@ -35,13 +35,8 @@ const NotificationSchema = new mongoose.Schema({
       trim:true,
     },
     files: [fileDataSchema],
-    
-    createdAt: {
-      type: String,
-      default: new Date().toLocaleString(),
-  },
        
-  });
+  },{ timestamps: true } );
 
   // collection creation
 const Notification = mongoose.model("NOTIFICATION", NotificationSchema);

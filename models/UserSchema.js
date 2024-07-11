@@ -55,11 +55,6 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: null
   },
-  createdOn: {
-    type: String,
-    default: new Date().toLocaleString(),
-  },
-  
   tokens: [
     {
       token: {
@@ -69,7 +64,7 @@ const userSchema = new mongoose.Schema({
     },
   ],
   
-});
+},{ timestamps: true } );
 
 
 

@@ -15,7 +15,7 @@ const validExtensions = {
         if (!uploadedFiles) {
             return res.status(400).json({ error: 'No files were uploaded.' });
         }
-  
+
         const fileExtension = uploadedFiles.originalname.split('.').pop().toLowerCase();
         let fileType = null;
   
@@ -27,7 +27,7 @@ const validExtensions = {
             }
         }
 
-        const { name } = req.body;
+        const { name } = req.body; 
 
         const href = `/assets/${fileType}/${uploadedFiles.filename}`
 
@@ -37,7 +37,7 @@ const validExtensions = {
 
     } catch (err) {
         console.log(err);
-        res.status(422).json({ error: 'Oops some thing went wrong' });
+        res.status(500).json({ error: 'Oops some thing went wrong' });
     }
 };
 
@@ -70,7 +70,7 @@ const deleteBanner = async (req, res) => {
         res.status(200).json({ message: 'Banner deleted successfully' });
     } catch (err) {
         console.log(err);
-        res.status(422).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -82,7 +82,7 @@ const ViewBanner = async (req, res) => {
 
         res.status(200).json({ data });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 

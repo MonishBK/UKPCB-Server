@@ -7,7 +7,7 @@ const {addBanner, deleteBanner, ViewBanner} = require('../Controllers/BannerCont
 
 
 // Upload banner
-router.post('/upload/e-files', upload.single("files"), addBanner);
+router.post('/upload/e-files', upload.single("files"), Authenticate, addBanner);
 
 // delete banner
 router.delete('/delete-banner', Authenticate, deleteBanner);

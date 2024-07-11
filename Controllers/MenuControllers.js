@@ -28,7 +28,7 @@ const addMainMenu = async (req, res) => {
         await menu.save();
         res.status(201).json({ message: "Added successfully" });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -61,7 +61,7 @@ const modifyMainMenu = async (req, res) => {
 
         res.status(200).json({ message: "Updated successfully" });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -86,7 +86,7 @@ const reorderMainMenu = async (req, res) => {
 
         res.status(200).json({ message: "Menu reordered successfully" });
     } catch (error) {
-        res.status(422).json({ message: "An error occurred", error: error.message });
+        res.status(500).json({ message: "An error occurred", error: error.message });
     }
 };
 
@@ -114,7 +114,7 @@ const deleteMainMenu = async (req, res) => {
 
         res.status(200).json({ message: "Deleted successfully" });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -125,7 +125,7 @@ const ViewMainMenu = async (req, res) => {
 
         res.status(200).json({ data });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -156,7 +156,7 @@ const addSideMenu = async (req, res) => {
         await menu.save();
         res.status(201).json({ message: "Added successfully" });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -189,7 +189,7 @@ const modifySideMenu = async (req, res) => {
 
         res.status(200).json({ message: "Updated successfully" });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -214,7 +214,7 @@ const reorderSideMenu = async (req, res) => {
 
         res.status(200).json({ message: "Menu reordered successfully" });
     } catch (error) {
-        res.status(422).json({ message: "An error occurred", error: error.message });
+        res.status(500).json({ message: "An error occurred", error: error.message });
     }
 };
 
@@ -242,7 +242,7 @@ const deleteSideMenu = async (req, res) => {
 
         res.status(200).json({ message: "Deleted successfully" });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -253,7 +253,7 @@ const ViewSideMenu = async (req, res) => {
 
         res.status(200).json({ data });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 

@@ -3,36 +3,51 @@ const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
 
 
-  const addFiles = async (req, res) => {
-    try {
-        // const uploadedFiles = req.files;
+const addFiles = async (req, res) => {
+
+        const uploadedFiles = req.files;
         
-        // if (!uploadedFiles || uploadedFiles.length === 0) {
-        //     return res.status(400).json({ error: 'No files were uploaded.' });
-        // }
-  
-        // console.log("Files Uploaded successfully:", uploadedFiles); 
-
-        // const { filePath, data } = req.body;
-
-        // Find the existing document by path
-        const pathExist = await File.findOne({ path: filePath });
-
-        if (!pathExist) {
-            return res.status(404).json({ error: "Path not exists" });
+        if (!uploadedFiles || uploadedFiles.length === 0) {
+            return res.status(400).json({ error: 'No files were uploaded.' });
         }
 
-        // Append the new data to the existing data array
-        pathExist.data.push(...data);
+        const { filePath, data } = req.body;
 
-        // Save the updated document
-        await pathExist.save();
+        try {
+            // Find the existing document by path
+            const pathExist = await File.findOne({ path: filePath });
 
-        res.status(201).json({ message: 'Success!!' });
-    } catch (err) {
-        console.log(err);
-        res.status(422).json({ error: 'Oops some thing went wrong' });
-    }
+            if (!pathExist) {
+                // Delete the uploaded files if path does not exist
+                await Promise.all(uploadedFiles.map(async file => {
+                    try {
+                        await fs.unlink(file.path);
+                    } catch (unlinkErr) {
+                        console.error(`Failed to delete file: ${file.path}`, unlinkErr);
+                    }
+                }));
+                return res.status(404).json({ error: "Path not exists" });
+            }
+
+            // Append the new data to the existing data array
+            pathExist.data.push(...data);
+
+            // Save the updated document
+            await pathExist.save();
+
+            res.status(201).json({ message: 'Success!!' });
+        } catch (err) {
+            console.log(err);
+            // Delete the uploaded files in case of an error
+            await Promise.all(uploadedFiles.map(async file => {
+                try {
+                    await fs.unlink(file.path);
+                } catch (unlinkErr) {
+                    console.error(`Failed to delete file: ${file.path}`, unlinkErr);
+                }
+            }));
+            res.status(500).json({ error: 'Oops some thing went wrong' });
+        }
 };
 
 
@@ -67,19 +82,82 @@ const deleteFile = async (req, res) => {
         res.status(200).json({ message: 'File deleted successfully' });
     } catch (err) {
         console.log(err);
-        res.status(422).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
 
 const ViewFiles = async (req, res) => {
     try {
-        // Find and sort the main menu items by the 'order' field
-        const data = await File.find();
+        const { path, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
-        res.status(200).json({ data });
+        // Define filters based on query parameters
+        const filters = { path };
+        
+        // Add filter by name if provided
+        if (name) {
+            filters['data.name'] = { $regex: new RegExp(name, 'i') }; // Case-insensitive search
+        }
+
+        // Add date range filter if startDate and/or endDate are provided
+        if (startDate || endDate) {
+            filters['data.createdAt'] = {};
+            if (startDate) {
+                filters['data.createdAt'].$gte = new Date(startDate);
+            }
+            if (endDate) {
+                filters['data.createdAt'].$lte = new Date(endDate);
+            }
+        }
+
+        // Find and sort the files by the 'createdAt' field in fileDataSchema, and apply pagination
+        const data = await File.aggregate([
+            { $match: filters },
+            { $unwind: '$data' },
+            { $match: filters },
+            { $sort: { 'data.createdAt': -1 } }, // Sort by createdAt in descending order
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $group: {
+                    _id: null,
+                    data: { $push: '$data' }
+                }
+            }
+        ]);
+
+        // Count total number of documents matching the filters
+        const total = await File.aggregate([
+            { $match: filters },
+            { $unwind: '$data' },
+            { $match: filters },
+            { $count: 'total' }
+        ]);
+
+        // Calculate pagination details
+        const totalCount = total.length > 0 ? total[0].total : 0;
+        const totalPages = Math.ceil(totalCount / limit);
+        const nextPage = page < totalPages ? page + 1 : null;
+        const hasNextPage = page < totalPages;
+        const hasPreviousPage = page > 1;
+
+        res.status(200).json({
+            data: data.length > 0 ? data[0].data : [], // Extract data array from aggregation result
+            pagination: {
+                total: totalCount,
+                totalPages,
+                nextPage,
+                hasNextPage,
+                hasPreviousPage,
+                limit
+            }
+        });
     } catch (error) {
-        return res.status(422).json({ error: "Oops, something went wrong" });
+        console.error('Error in ViewFiles:', error);
+        return res.status(500).json({ error: "Oops, something went wrong" });
     }
 };
 
@@ -116,5 +194,5 @@ const ViewFiles = async (req, res) => {
 
 //   } catch (err) {
 //     console.log(err);
-//     res.status(422).json({ error: err.message });
+//     res.status(500).json({ error: err.message });
 //   }
