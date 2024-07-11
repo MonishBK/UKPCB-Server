@@ -53,7 +53,7 @@ const updateComplaintsSeen = async (req, res) => {
         const currentDate = new Date();
         const dateWithoutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
-        const data = await Complaints.findByIdAndUpdate(_id, { seen_date: dateWithoutTime }, {new: true});
+        await Complaints.findByIdAndUpdate(_id, { seen_date: dateWithoutTime }, {new: true});
         res.status(201).json({ message: "seen date updated successfully" });
 
     } catch (err) {
@@ -69,7 +69,7 @@ const updateComplaintsRespondedDate = async (req, res) => {
         const currentDate = new Date();
         const dateWithoutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
-        const data = await Complaints.findByIdAndUpdate(_id, { responded_date: dateWithoutTime }, {new: true});
+        await Complaints.findByIdAndUpdate(_id, { responded_date: dateWithoutTime }, {new: true});
         res.status(201).json({ message: "responded date updated successfully" });
 
     } catch (err) {
@@ -92,7 +92,7 @@ const updateComplaintsNote = async (req, res) => {
             return res.status(404).json({ message: "Complaint not found" });
         }
 
-        res.status(200).json({ message: "Action note updated successfully", data });
+        res.status(200).json({ message: "Action note updated successfully" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Oops, something went wrong' });
@@ -119,7 +119,7 @@ const updateComplaintStatus = async (req, res) => {
                 break;
         }
 
-        const data = await Complaints.findByIdAndUpdate(_id, updateFields, { new: true });
+        await Complaints.findByIdAndUpdate(_id, updateFields, { new: true });
         res.status(201).json({ message: "Successfully updated status and date" });
 
     } catch (err) {
