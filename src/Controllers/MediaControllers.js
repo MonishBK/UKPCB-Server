@@ -1,4 +1,4 @@
-const Media = require('../models/mediaSchema')
+const Media = require('../models/MediaSchema')
 const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
 const {validExtensions} = require('../middlewares/uploadFiles')
