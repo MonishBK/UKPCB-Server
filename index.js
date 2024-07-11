@@ -42,8 +42,8 @@ app.get('/', (req, res) =>{
 });
  
 // Serve static files
-app.use('/assets', express.static(path.join(__dirname, 'src', 'public', 'assets')));
-app.use('/pdf-data', express.static(path.join(__dirname, 'src', 'JsonFiles')));
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
+app.use('/pdf-data', express.static(path.join(__dirname, 'JsonFiles')));
 
 app.listen(PORT, ()=>{
     console.log(`Server is running at port ${PORT}`) 
