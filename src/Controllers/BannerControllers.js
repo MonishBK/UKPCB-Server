@@ -61,7 +61,7 @@ const deleteBanner = async (req, res) => {
         }
 
         // Delete the file from the server
-        const serverBannerPath = path.join(__dirname, '..', 'public', 'assets', bannerDoc.type, path.basename(fileToRemove));
+        const serverBannerPath = path.join(__dirname, '../..', 'public', 'assets', bannerDoc.type, path.basename(fileToRemove));
         await fs.unlink(serverBannerPath);
 
         // Remove the file from the data array in MongoDB

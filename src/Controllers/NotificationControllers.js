@@ -73,7 +73,7 @@ const deleteNotificationFiles = async (req, res) => {
             }
 
             // Delete the file from the server
-            const serverFilePath = path.join(__dirname, '..', 'public', 'assets', fileToRemove.type, path.basename(fileToRemove.href));
+            const serverFilePath = path.join(__dirname, '../..', 'public', 'assets', fileToRemove.type, path.basename(fileToRemove.href));
             await fs.unlink(serverFilePath);
 
             // Remove the file from the files array in MongoDB
@@ -103,7 +103,7 @@ const deleteNotification = async (req, res) => {
 
         // Delete files from the server
         for (const file of notificationDoc.files) {
-            const serverFilePath = path.join(__dirname, '..', 'public', 'assets', file.type, path.basename(file.href));
+            const serverFilePath = path.join(__dirname, '../..', 'public', 'assets', file.type, path.basename(file.href));
             await fs.unlink(serverFilePath);
         }
 

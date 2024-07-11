@@ -70,7 +70,7 @@ const deleteFile = async (req, res) => {
         }
 
         // Delete the file from the server
-        const serverFilePath = path.join(__dirname, '..', 'public', 'assets', fileToRemove.type, path.basename(fileToRemove.href));
+        const serverFilePath = path.join(__dirname, '../..', 'public', 'assets', fileToRemove.type, path.basename(fileToRemove.href));
         await fs.unlink(serverFilePath);
 
         // Remove the file from the data array in MongoDB

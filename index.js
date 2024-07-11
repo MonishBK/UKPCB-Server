@@ -9,7 +9,7 @@ const path = require('path');
 dotenv.config({path:"./config.env"}); 
 const PORT = process.env.PORT || 5000 ;
  
-require('./db/conn');
+require('./src/db/conn');
 
 // to read json file we use this middle ware
 app.use(express.json());
@@ -27,14 +27,14 @@ app.use(cors(corsOptions));
 app.use(cookieParser()); 
 
 //linking the router files to make our route easily 
-app.use("/api/user",require('./Routes/userRoutes'));
-app.use("/api/menus",require('./Routes/menuRoutes'));
-app.use("/api/filesUpload",require('./Routes/fileRoutes'));
-app.use("/api/notifications",require('./Routes/notificationRoutes'));
-app.use("/api/enquiries",require('./Routes/enquiriesRoutes'));
-app.use("/api/complaints",require('./Routes/complaintsRoutes'));
-app.use("/api/media",require('./Routes/mediaRoutes'));
-app.use("/api/banner",require('./Routes/bannerRoutes'));
+app.use("/api/user",require('./src/Routes/userRoutes'));
+app.use("/api/menus",require('./src/Routes/menuRoutes'));
+app.use("/api/filesUpload",require('./src/Routes/fileRoutes'));
+app.use("/api/notifications",require('./src/Routes/notificationRoutes'));
+app.use("/api/enquiries",require('./src/Routes/enquiriesRoutes'));
+app.use("/api/complaints",require('./src/Routes/complaintsRoutes'));
+app.use("/api/media",require('./src/Routes/mediaRoutes'));
+app.use("/api/banner",require('./src/Routes/bannerRoutes'));
 
 
 app.get('/', (req, res) =>{
@@ -42,8 +42,8 @@ app.get('/', (req, res) =>{
 });
  
 // Serve static files
-app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
-app.use('/pdf-data', express.static(path.join(__dirname, 'JsonFiles')));
+app.use('/assets', express.static(path.join(__dirname, 'src', 'public', 'assets')));
+app.use('/pdf-data', express.static(path.join(__dirname, 'src', 'JsonFiles')));
 
 app.listen(PORT, ()=>{
     console.log(`Server is running at port ${PORT}`) 

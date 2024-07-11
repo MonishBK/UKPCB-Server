@@ -152,12 +152,28 @@ const deleteComplaints = async (req, res) => {
     try {
         const { _id } = req.body;
 
+        // Find the complaint to delete
+        const complaint = await Complaints.findById(_id);
+
+        // Check if there are any files to delete
+        if (complaint.files && complaint.files.length > 0) {
+            // Delete each file from the server
+            complaint.files.forEach(file => {
+                const filePath = path.join(__dirname, '../..', 'public', 'assets', file.type, path.basename(file.name));
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            });
+        }
+
+        // Now delete the complaint document
         await Complaints.findByIdAndDelete(_id);
-        res.status(201).json({ message: "complaint deleted successfully" });
+        
+        res.status(201).json({ message: "Complaint deleted successfully" });
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Oops some thing went wrong' });
+        res.status(500).json({ error: 'Oops something went wrong' });
     }
 };
 

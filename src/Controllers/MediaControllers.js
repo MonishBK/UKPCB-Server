@@ -89,7 +89,7 @@ const deleteMedia = async (req, res) => {
         }
 
         // Delete the file from the server
-        const serverMediaPath = path.join(__dirname, '..', 'public', 'assets', fileToRemove.type, path.basename(fileToRemove.href));
+        const serverMediaPath = path.join(__dirname, '../..', 'public', 'assets', fileToRemove.type, path.basename(fileToRemove.href));
         await fs.unlink(serverMediaPath);
 
         // Remove the file from the data array in MongoDB

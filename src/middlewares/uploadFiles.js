@@ -25,7 +25,7 @@ const validExtensions = {
         // console.log("type =>", fileType);
   
         if (fileType) {
-            cb(null, path.join(__dirname, '..', 'public', 'assets', fileType)); // Store in the appropriate directory
+            cb(null, path.join(__dirname, '../..', 'public', 'assets', fileType)); // Store in the appropriate directory
         } else {
             cb(new Error('Invalid file type'), false);
         }

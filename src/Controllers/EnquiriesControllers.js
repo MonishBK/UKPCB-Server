@@ -131,12 +131,28 @@ const deleteEnquiries = async (req, res) => {
     try {
         const { _id } = req.body;
 
+        // Find the enquiry to delete
+        const enquiry = await Enquiries.findById(_id);
+
+        // Check if there are any files to delete
+        if (enquiry.files && enquiry.files.length > 0) {
+            // Delete each file from the server
+            enquiry.files.forEach(file => {
+                const filePath = path.join(__dirname, '../..', 'public', 'assets', file.type, path.basename(file.name));
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            });
+        }
+
+        // Now delete the enquiry document
         await Enquiries.findByIdAndDelete(_id);
-        res.status(201).json({ message: "successfully" });
+        
+        res.status(201).json({ message: "Enquiry deleted successfully" });
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Oops some thing went wrong' });
+        res.status(500).json({ error: 'Oops something went wrong' });
     }
 };
 
