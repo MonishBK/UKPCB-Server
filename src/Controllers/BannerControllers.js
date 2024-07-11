@@ -1,4 +1,4 @@
-const Banner = require('../models/bannerSchema')
+const Banner = require('../models/BannerSchema')
 const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
 
