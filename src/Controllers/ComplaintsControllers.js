@@ -14,28 +14,32 @@ const addComplaints = async (req, res) => {
         const { subject, name, email, phone, complaint } = req.body;
         let files = []
 
-        uploadedFiles.map((ele, ind) => {
-            
-            const fileExtension = ele.originalname.split('.').pop().toLowerCase();
-            let fileType = null;
-      
-            // Find the file type based on the extension
-            for (const [type, extensions] of Object.entries(validExtensions)) {
-                if (extensions.includes(fileExtension)) {
-                    fileType = type;
-                    break;
+        if(uploadedFiles){
+
+            uploadedFiles.map((ele, ind) => {
+                
+                const fileExtension = ele.originalname.split('.').pop().toLowerCase();
+                let fileType = null;
+          
+                // Find the file type based on the extension
+                for (const [type, extensions] of Object.entries(validExtensions)) {
+                    if (extensions.includes(fileExtension)) {
+                        fileType = type;
+                        break;
+                    }
                 }
-            }
+    
+                const fileFormat = {
+                    name: uploadedFiles.filename,
+                    href:`/assets/${fileType}/${uploadedFiles.filename}`,
+                    type: fileType
+                }
+    
+                files.push(fileFormat)
+    
+            })
+        }
 
-            const fileFormat = {
-                name: uploadedFiles.filename,
-                href:`/assets/${fileType}/${uploadedFiles.filename}`,
-                type: fileType
-            }
-
-            files.push(fileFormat)
-
-        })
 
         const data = new Complaints({ subject, name, email, phone, complaint, files });
         await data.save()
