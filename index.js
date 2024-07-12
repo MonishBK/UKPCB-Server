@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const app = express();
-// const cors = require('cors');
+const cors = require('cors');
 const cookieParser = require("cookie-parser");
 const path = require('path');
 
@@ -16,13 +16,13 @@ app.use(express.json());
 
 
 const corsOptions = {
-        origin: "https://uk-pollution-control-board.vercel.app",
+        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
         // origin: "http://localhost:5173",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
         credentials: true
   };
   
-// app.use(cors(corsOptions)); 
+app.use(cors(corsOptions)); 
 
 app.use(cookieParser()); 
 
