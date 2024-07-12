@@ -4,50 +4,42 @@ const path = require('path');
 
 
 const addFiles = async (req, res) => {
+    const uploadedFiles = req.files;
 
-        const uploadedFiles = req.files;
-        
-        if (!uploadedFiles || uploadedFiles.length === 0) {
-            return res.status(400).json({ error: 'No files were uploaded.' });
+    if (!uploadedFiles || uploadedFiles.length === 0) {
+        return res.status(400).json({ error: 'No files were uploaded.' });
+    }
+
+    const { filePath, data } = req.body;
+
+    try {
+        // Find the existing document by path
+        let pathExist = await File.findOne({ path: filePath });
+
+        if (!pathExist) {
+            // Create a new document if the path does not exist
+            pathExist = new File({ path: filePath, data: [] });
         }
 
-        const { filePath, data } = req.body;
+        // Append the new data to the existing data array
+        pathExist.data.push(...data);
 
-        try {
-            // Find the existing document by path
-            const pathExist = await File.findOne({ path: filePath });
+        // Save the updated or new document
+        await pathExist.save();
 
-            if (!pathExist) {
-                // Delete the uploaded files if path does not exist
-                await Promise.all(uploadedFiles.map(async file => {
-                    try {
-                        await fs.unlink(file.path);
-                    } catch (unlinkErr) {
-                        console.error(`Failed to delete file: ${file.path}`, unlinkErr);
-                    }
-                }));
-                return res.status(404).json({ error: "Path not exists" });
+        res.status(201).json({ message: 'Success!!' });
+    } catch (err) {
+        console.log(err);
+        // Delete the uploaded files in case of an error
+        await Promise.all(uploadedFiles.map(async file => {
+            try {
+                await fs.unlink(file.path);
+            } catch (unlinkErr) {
+                console.error(`Failed to delete file: ${file.path}`, unlinkErr);
             }
-
-            // Append the new data to the existing data array
-            pathExist.data.push(...data);
-
-            // Save the updated document
-            await pathExist.save();
-
-            res.status(201).json({ message: 'Success!!' });
-        } catch (err) {
-            console.log(err);
-            // Delete the uploaded files in case of an error
-            await Promise.all(uploadedFiles.map(async file => {
-                try {
-                    await fs.unlink(file.path);
-                } catch (unlinkErr) {
-                    console.error(`Failed to delete file: ${file.path}`, unlinkErr);
-                }
-            }));
-            res.status(500).json({ error: 'Oops some thing went wrong' });
-        }
+        }));
+        res.status(500).json({ error: 'Oops some thing went wrong' });
+    }
 };
 
 
