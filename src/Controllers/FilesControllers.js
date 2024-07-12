@@ -10,9 +10,38 @@ const addFiles = async (req, res) => {
         return res.status(400).json({ error: 'No files were uploaded.' });
     }
 
-    const { filePath, data } = req.body;
+    const { filePath, names } = req.body;
 
     try {
+        let files = []
+
+        if(uploadedFiles){
+
+
+            uploadedFiles.map((ele, ind) => {
+                
+                const fileExtension = ele.originalname.split('.').pop().toLowerCase();
+                let fileType = null;
+          
+                // Find the file type based on the extension
+                for (const [type, extensions] of Object.entries(validExtensions)) {
+                    if (extensions.includes(fileExtension)) {
+                        fileType = type;
+                        break;
+                    }
+                }
+    
+                const fileFormat = {
+                    name: names[ind],
+                    href:`/assets/${fileType}/${uploadedFiles.filename}`,
+                    type: fileType
+                }
+    
+                files.push(fileFormat)
+    
+            })
+        }
+
         // Find the existing document by path
         let pathExist = await File.findOne({ path: filePath });
 
@@ -21,8 +50,10 @@ const addFiles = async (req, res) => {
             pathExist = new File({ path: filePath, data: [] });
         }
 
+        
+
         // Append the new data to the existing data array
-        pathExist.data.push(...data);
+        pathExist.data.push(...files);
 
         // Save the updated or new document
         await pathExist.save();
