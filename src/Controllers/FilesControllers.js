@@ -6,21 +6,13 @@ const path = require('path');
 const addFiles = async (req, res) => {
     const uploadedFiles = req.files;
 
-    if (!uploadedFiles || uploadedFiles.length === 0) {
-        return res.status(400).json({ error: 'No files were uploaded.' });
-    }
-
-    const { filePath, names } = req.body;
-
+    
     try {
-        let files = []
-
+        
         if(uploadedFiles){
-
-
-            uploadedFiles.map((ele, ind) => {
-                
-                const fileExtension = ele.originalname.split('.').pop().toLowerCase();
+            const { filePath, name } = req.body;
+            
+            const fileExtension = uploadedFiles.originalname.split('.').pop().toLowerCase();
                 let fileType = null;
           
                 // Find the file type based on the extension
@@ -32,33 +24,33 @@ const addFiles = async (req, res) => {
                 }
     
                 const fileFormat = {
-                    name: names[ind],
+                    name: name,
                     href:`/assets/${fileType}/${uploadedFiles.filename}`,
                     type: fileType
                 }
     
-                files.push(fileFormat)
-    
-            })
-        }
 
-        // Find the existing document by path
-        let pathExist = await File.findOne({ path: filePath });
-
-        if (!pathExist) {
-            // Create a new document if the path does not exist
-            pathExist = new File({ path: filePath, data: [] });
-        }
-
+                // Find the existing document by path
+                let pathExist = await File.findOne({ path: filePath });
         
+                if (!pathExist) {
+                    // Create a new document if the path does not exist
+                    pathExist = new File({ path: filePath, data: [] });
+                }
+        
+                
+        
+                // Append the new data to the existing data array
+                pathExist.data.push(...fileFormat);
+        
+                // Save the updated or new document
+                await pathExist.save();
+        
+                res.status(201).json({ message: 'Success!!' });
+        }else{
+            return res.status(400).json({ error: 'No files were uploaded.' });
+        }
 
-        // Append the new data to the existing data array
-        pathExist.data.push(...files);
-
-        // Save the updated or new document
-        await pathExist.save();
-
-        res.status(201).json({ message: 'Success!!' });
     } catch (err) {
         console.log(err);
         // Delete the uploaded files in case of an error

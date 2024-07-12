@@ -7,7 +7,7 @@ const {addFiles, deleteFile, ViewFiles} = require('../Controllers/FilesControlle
 
 
 // Upload multiple files
-router.post('/upload/e-files', upload.array("files", 10), Authenticate, addFiles);
+router.post('/upload/e-files', upload.single("file"), Authenticate, addFiles);
 
 // delete file
 router.delete('/delete-file', Authenticate, deleteFile);
