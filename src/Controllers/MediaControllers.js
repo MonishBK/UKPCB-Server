@@ -12,7 +12,7 @@ const addMedia = async (req, res) => {
             return res.status(400).json({ error: 'No files were uploaded.' });
         }
 
-        const { name, description, media_names } = req.body;
+        const { name, description } = req.body;
         let files = [];
 
         // Process each uploaded file
@@ -37,7 +37,7 @@ const addMedia = async (req, res) => {
 
             // Create file format object for MongoDB storage
             const fileFormat = {
-                media_name: media_names[i], // Assuming media_names array corresponds to each file
+                media_name: file.filename, // Assuming media_names array corresponds to each file
                 href: `/assets/${fileType}/${file.filename}`, // Assuming 'filename' is stored by multer
                 type: fileType
             };
@@ -69,16 +69,95 @@ const addMedia = async (req, res) => {
     }
 };
 
+const UploadMoreMedia = async (req, res) => {
+    try {
+        const uploadedFiles = req.files;
+        
+        if (!uploadedFiles || uploadedFiles.length === 0) {
+            return res.status(400).json({ error: 'No files were uploaded.' });
+        }
+
+        const { _id, name, description } = req.body;
+        let files = [];
+
+        // Process each uploaded file
+        for (let i = 0; i < uploadedFiles.length; i++) {
+            const file = uploadedFiles[i];
+            const fileExtension = file.originalname.split('.').pop().toLowerCase();
+            let fileType = null;
+
+            // Determine the file type based on valid extensions
+            for (const [type, extensions] of Object.entries(validExtensions)) {
+                if (extensions.includes(fileExtension)) {
+                    fileType = type;
+                    break;
+                }
+            }
+
+            if (!fileType) {
+                // Delete the uploaded file if it does not match valid extensions
+                await fs.unlink(file.path);
+                return res.status(400).json({ error: `Invalid file type for ${file.originalname}` });
+            }
+
+            // Create file format object for MongoDB storage
+            const fileFormat = {
+                media_name: file.filename, // Assuming media_names array corresponds to each file
+                href: `/assets/${fileType}/${file.filename}`, // Assuming 'filename' is stored by multer
+                type: fileType
+            };
+
+            files.push(fileFormat);
+        }
+
+        // Create update object conditionally
+        let updateObject = { $push: { data: { $each: files } } };
+        if (name) updateObject.name = name;
+        if (description) updateObject.description = description;
+
+        // Update the Media document
+        const media = await Media.findByIdAndUpdate(
+            _id,
+            updateObject,
+            { new: true }
+        );
+
+        if (!media) {
+            return res.status(404).json({ error: "Media document not found" });
+        }
+
+        res.status(201).json({ message: "Media added successfully", media });
+    } catch (err) {
+        console.error("Error adding media:", err);
+
+        // Delete uploaded files if an error occurs during database operation
+        if (uploadedFiles && uploadedFiles.length > 0) {
+            for (const file of uploadedFiles) {
+                try {
+                    await fs.unlink(file.path);
+                    console.log(`Deleted file: ${file.path}`);
+                } catch (unlinkErr) {
+                    console.error(`Failed to delete file: ${file.path}`, unlinkErr);
+                }
+            }
+        }
+
+        res.status(500).json({ error: 'Oops, something went wrong' });
+    }
+};
+
 
 const deleteMedia = async (req, res) => {
     try {
-        const { _id, href } = req.body;
+        const {_id, href } = req.body;
+
+        console.log(_id, href)
 
         // Find the document by path
         const mediaDoc = await Media.findById(_id);
 
         if (!mediaDoc) {
-            return res.status(404).json({ error: "Path not exists" });
+            return res.status(404).json({ error: "id not exists" });
         }
 
         // Find the file to be removed
@@ -105,6 +184,38 @@ const deleteMedia = async (req, res) => {
     }
 };
 
+const deleteEventMedia = async (req, res) => {
+    try {
+        const { _id } = req.body;
+
+        // Find the document by ID
+        const mediaDoc = await Media.findById(_id);
+
+        if (!mediaDoc) {
+            return res.status(404).json({ error: "Media document not found" });
+        }
+
+        // Delete all files from the server
+        for (const file of mediaDoc.data) {
+            const serverMediaPath = path.join(__dirname, '../..', 'public', 'assets', file.type, path.basename(file.href));
+            try {
+                await fs.unlink(serverMediaPath);
+                console.log(`Deleted file: ${serverMediaPath}`);
+            } catch (unlinkErr) {
+                console.error(`Failed to delete file: ${serverMediaPath}`, unlinkErr);
+            }
+        }
+
+        // Delete the document from the database
+        await Media.findByIdAndDelete(_id);
+
+        res.status(200).json({ message: 'Media and associated files deleted successfully' });
+    } catch (err) {
+        console.error("Error deleting media:", err);
+        res.status(500).json({ error: 'Oops, something went wrong' });
+    }
+}; 
+    
 
 const ViewMedia = async (req, res) => {
     try {
@@ -155,4 +266,4 @@ const ViewMedia = async (req, res) => {
 };
 
 
-module.exports = {addMedia, deleteMedia, ViewMedia}
+module.exports = {addMedia, deleteMedia, UploadMoreMedia, deleteEventMedia, ViewMedia}
