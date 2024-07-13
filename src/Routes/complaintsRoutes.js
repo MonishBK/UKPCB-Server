@@ -3,7 +3,7 @@ const router = express.Router();
 const Authenticate = require("../middlewares/authenticate")
 const {upload} = require('../middlewares/uploadFiles')
 const {addComplaints, updateComplaintsSeen, updateComplaintsRespondedDate, updateComplaintStatus, ComplaintStatus,
-    deleteComplaints, ViewComplaints, updateComplaintsNote} = require('../Controllers/ComplaintsControllers')
+    deleteComplaints, ViewComplaints, updateComplaintsNote, ViewSingleComplaint} = require('../Controllers/ComplaintsControllers')
 
 
 // add complaints
@@ -27,9 +27,11 @@ router.delete('/delete-complaints', Authenticate, deleteComplaints);
 // fetch complaints
 router.get('/fetch-complaint-status', ComplaintStatus);
 
+// fetch single complaints
+router.get('/fetch-single-complaint/:id', ViewSingleComplaint);
+
 // fetch complaints
 router.get('/fetch-complaints', ViewComplaints);
-
 
 
 module.exports = router;

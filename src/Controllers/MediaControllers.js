@@ -216,6 +216,23 @@ const deleteEventMedia = async (req, res) => {
     }
 }; 
     
+const ViewSingleMedia = async (req, res) => {
+    try {
+        const { id } = req.params; // Assuming id is in params, not _id
+
+        const data = await Media.findById(id);
+
+        if (!data) {
+            return res.status(404).json({ error: 'Media not found' });
+        }
+
+        return res.status(200).json({ data });
+        
+    } catch (error) {
+        console.error("Error fetching Media:", error);
+        res.status(500).json({ error: 'Oops, something went wrong' });
+    }
+}
 
 const ViewMedia = async (req, res) => {
     try {
@@ -266,4 +283,4 @@ const ViewMedia = async (req, res) => {
 };
 
 
-module.exports = {addMedia, deleteMedia, UploadMoreMedia, deleteEventMedia, ViewMedia}
+module.exports = {addMedia, deleteMedia, UploadMoreMedia, deleteEventMedia, ViewSingleMedia, ViewMedia}

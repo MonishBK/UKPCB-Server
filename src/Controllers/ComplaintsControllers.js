@@ -43,7 +43,7 @@ const addComplaints = async (req, res) => {
 
         const data = new Complaints({ subject, name, email, phone, complaint, files });
         await data.save()
-        res.status(201).json({ message: "complaint added successfully" });
+        res.status(201).json({ message: "complaint added successfully", complaintID: data._id });
 
     } catch (err) {
         console.log(err);
@@ -181,6 +181,25 @@ const deleteComplaints = async (req, res) => {
     }
 };
 
+const ViewSingleComplaint = async (req, res) => {
+    try {
+        const { id } = req.params; // Assuming id is in params, not _id
+
+        const data = await Complaints.findById(id);
+
+        if (!data) {
+            return res.status(404).json({ error: 'Complaint not found' });
+        }
+
+        return res.status(200).json({ data });
+        
+    } catch (error) {
+        console.error("Error fetching complaint:", error);
+        res.status(500).json({ error: 'Oops, something went wrong' });
+    }
+}
+
+
 const ViewComplaints = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -264,4 +283,4 @@ const ViewComplaints = async (req, res) => {
 };
 
 module.exports = { addComplaints, updateComplaintsSeen, updateComplaintsRespondedDate,
-    updateComplaintStatus, ComplaintStatus, deleteComplaints, ViewComplaints, updateComplaintsNote }
+    updateComplaintStatus, ComplaintStatus, deleteComplaints, ViewSingleComplaint, ViewComplaints, updateComplaintsNote }

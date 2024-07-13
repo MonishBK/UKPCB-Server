@@ -42,7 +42,7 @@ const addEnquiries = async (req, res) => {
 
         const data = new Enquiries({ subject, name, email, phone, enquiry, files });
         await data.save()
-        res.status(201).json({ message: "Added successfully" });
+        res.status(201).json({ message: "Added successfully", EnquiryID: data._id });
 
     } catch (err) {
         console.log(err);
@@ -177,6 +177,24 @@ const EnquiryStatus = async (req, res) => {
     }
 };
 
+const ViewSingleEnquiries = async (req, res) => {
+    try {
+        const { id } = req.params; // Assuming id is in params, not _id
+
+        const data = await Enquiries.findById(id);
+
+        if (!data) {
+            return res.status(404).json({ error: 'Enquiry not found' });
+        }
+
+        return res.status(200).json({ data });
+        
+    } catch (error) {
+        console.error("Error fetching Enquiries:", error);
+        res.status(500).json({ error: 'Oops, something went wrong' });
+    }
+}
+
 const ViewEnquiries = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -260,4 +278,4 @@ const ViewEnquiries = async (req, res) => {
 };
 
 module.exports = { addEnquiries, updateEnquiriesSeen, updateEnquiriesRespondedDate, 
-    deleteEnquiries, ViewEnquiries, updateEnquiryStatus, EnquiryStatus, updateEnquiryNote }
+    deleteEnquiries, ViewEnquiries, updateEnquiryStatus, EnquiryStatus, ViewSingleEnquiries, updateEnquiryNote }

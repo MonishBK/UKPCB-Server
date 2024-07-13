@@ -3,7 +3,7 @@ const router = express.Router();
 const Authenticate = require("../middlewares/authenticate")
 const {upload} = require('../middlewares/uploadFiles')
 const {addEnquiries, updateEnquiriesSeen, updateEnquiriesRespondedDate, updateEnquiryStatus, EnquiryStatus,
-    deleteEnquiries, ViewEnquiries, updateEnquiryNote} = require('../Controllers/EnquiriesControllers')
+    deleteEnquiries, ViewEnquiries, updateEnquiryNote, ViewSingleEnquiries} = require('../Controllers/EnquiriesControllers')
 
 
 // add enquiries
@@ -26,6 +26,9 @@ router.delete('/delete-enquiries', Authenticate, deleteEnquiries);
 
 // fetch enquiry status
 router.get('/fetch-enquiries-status', ViewEnquiries);
+
+// fetch enquiries
+router.get('/fetch-single-enquiries/:id', ViewSingleEnquiries);
 
 // fetch enquiries
 router.get('/fetch-enquiries', ViewEnquiries);
