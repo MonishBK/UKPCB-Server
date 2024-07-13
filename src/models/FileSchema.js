@@ -16,7 +16,7 @@ const fileDataSchema = new mongoose.Schema({
 },{ timestamps: true } );
 
 const fileSchema = new mongoose.Schema({
-    filePath: {
+    path: {
         type: String,
         required: true,
         trim: true,

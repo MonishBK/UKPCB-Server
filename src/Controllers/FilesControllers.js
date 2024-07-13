@@ -1,11 +1,11 @@
 const File = require('../models/FileSchema')
 const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
+const {validExtensions} = require('../middlewares/uploadFiles')
 
 
 const addFiles = async (req, res) => {
-    const uploadedFiles = req.files;
-
+    const uploadedFiles = req.file;
     
     try {
         
@@ -31,7 +31,7 @@ const addFiles = async (req, res) => {
     
 
                 // Find the existing document by path
-                let pathExist = await File.findOne({ filePath: filePath });
+                let pathExist = await File.findOne({ path: filePath });
         
                 if (!pathExist) {
                     // Create a new document if the path does not exist
@@ -41,7 +41,7 @@ const addFiles = async (req, res) => {
                 
         
                 // Append the new data to the existing data array
-                pathExist.data.push(...fileFormat);
+                pathExist.data.push(fileFormat);
         
                 // Save the updated or new document
                 await pathExist.save();
@@ -53,14 +53,7 @@ const addFiles = async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        // Delete the uploaded files in case of an error
-        await Promise.all(uploadedFiles.map(async file => {
-            try {
-                await fs.unlink(file.path);
-            } catch (unlinkErr) {
-                console.error(`Failed to delete file: ${file.path}`, unlinkErr);
-            }
-        }));
+        fs.unlink(uploadedFiles.path)
         res.status(500).json({ error: 'Oops some thing went wrong' });
     }
 };
@@ -70,8 +63,10 @@ const deleteFile = async (req, res) => {
     try {
         const { filePath, href } = req.body;
 
+        console.log(filePath, href )
+
         // Find the document by path
-        const fileDoc = await File.findOne({ filePath:filePath });
+        const fileDoc = await File.findOne({ path:filePath });
 
         if (!fileDoc) {
             return res.status(404).json({ error: "Path not exists" });
@@ -104,14 +99,19 @@ const deleteFile = async (req, res) => {
 
 const ViewFiles = async (req, res) => {
     try {
-        const { filePath, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
+        const { path, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
         // Define filters based on query parameters
-        const filters = { filePath };
-        
+        const filters = {};
+
+        // Add filter by path if provided
+        if (path) {
+            filters.path = { $in: path.split(',') }; // Handle multiple paths
+        }
+
         // Add filter by name if provided
         if (name) {
             filters['data.name'] = { $regex: new RegExp(name, 'i') }; // Case-insensitive search
@@ -128,9 +128,8 @@ const ViewFiles = async (req, res) => {
             }
         }
 
-        // Find and sort the files by the 'createdAt' field in fileDataSchema, and apply pagination
-        const data = await File.aggregate([
-            { $match: filters },
+        // Aggregate query
+        const aggregatePipeline = [
             { $unwind: '$data' },
             { $match: filters },
             { $sort: { 'data.createdAt': -1 } }, // Sort by createdAt in descending order
@@ -138,19 +137,39 @@ const ViewFiles = async (req, res) => {
             { $limit: limit },
             {
                 $group: {
-                    _id: null,
+                    _id: '$path', // Group by path
                     data: { $push: '$data' }
                 }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    filePath: '$_id', // Rename _id to filePath for clarity
+                    data: 1
+                }
             }
-        ]);
+        ];
+
+        // If no parameters are provided, modify the aggregate pipeline to avoid empty $match stage
+        if (!path && !name && !startDate && !endDate) {
+            aggregatePipeline.shift(); // Remove the $unwind stage to get the entire data array
+        }
+
+        // Find and sort the files by the 'createdAt' field in fileDataSchema, and apply pagination
+        const data = await File.aggregate(aggregatePipeline);
 
         // Count total number of documents matching the filters
-        const total = await File.aggregate([
-            { $match: filters },
+        const totalAggregatePipeline = [
             { $unwind: '$data' },
             { $match: filters },
             { $count: 'total' }
-        ]);
+        ];
+
+        if (!path && !name && !startDate && !endDate) {
+            totalAggregatePipeline.shift(); // Remove the $unwind stage to count entire documents
+        }
+
+        const total = await File.aggregate(totalAggregatePipeline);
 
         // Calculate pagination details
         const totalCount = total.length > 0 ? total[0].total : 0;
@@ -159,9 +178,13 @@ const ViewFiles = async (req, res) => {
         const hasNextPage = page < totalPages;
         const hasPreviousPage = page > 1;
 
+
+        console.log(data)
         res.status(200).json({
-            filePath: filePath,
-            data: data.length > 0 ? data[0].data : [], // Extract data array from aggregation result
+            data: data.map(item => ({
+                filePath: item.filePath,
+                data: [item.data] // Wrap data array in another array
+            })),
             pagination: {
                 total: totalCount,
                 totalPages,
