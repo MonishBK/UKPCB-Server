@@ -42,7 +42,7 @@ const addEnquiries = async (req, res) => {
 
         const data = new Enquiries({ subject, name, email, phone, enquiry, files });
         await data.save()
-        res.status(201).json({ message: "Added successfully", EnquiryID: data._id });
+        res.status(201).json({ message: "Added successfully", EnquiryID: enquiryId });
 
     } catch (err) {
         console.log(err);

@@ -43,7 +43,7 @@ const addComplaints = async (req, res) => {
 
         const data = new Complaints({ subject, name, email, phone, complaint, files });
         await data.save()
-        res.status(201).json({ message: "complaint added successfully", complaintID: data._id });
+        res.status(201).json({ message: "complaint added successfully", complaintID: complaintId });
 
     } catch (err) {
         console.log(err);
