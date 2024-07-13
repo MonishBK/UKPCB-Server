@@ -31,7 +31,7 @@ const addFiles = async (req, res) => {
     
 
                 // Find the existing document by path
-                let pathExist = await File.findOne({ path: filePath });
+                let pathExist = await File.findOne({ filePath: filePath });
         
                 if (!pathExist) {
                     // Create a new document if the path does not exist
@@ -71,7 +71,7 @@ const deleteFile = async (req, res) => {
         const { filePath, href } = req.body;
 
         // Find the document by path
-        const fileDoc = await File.findOne({ path:filePath });
+        const fileDoc = await File.findOne({ filePath:filePath });
 
         if (!fileDoc) {
             return res.status(404).json({ error: "Path not exists" });
@@ -104,13 +104,13 @@ const deleteFile = async (req, res) => {
 
 const ViewFiles = async (req, res) => {
     try {
-        const { path, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
+        const { filePath, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
         // Define filters based on query parameters
-        const filters = { path };
+        const filters = { filePath };
         
         // Add filter by name if provided
         if (name) {
@@ -160,6 +160,7 @@ const ViewFiles = async (req, res) => {
         const hasPreviousPage = page > 1;
 
         res.status(200).json({
+            filePath: filePath,
             data: data.length > 0 ? data[0].data : [], // Extract data array from aggregation result
             pagination: {
                 total: totalCount,
