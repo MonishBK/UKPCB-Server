@@ -183,9 +183,9 @@ const deleteComplaints = async (req, res) => {
 
 const ViewSingleComplaint = async (req, res) => {
     try {
-        const { id } = req.params; // Assuming id is in params, not _id
-
-        const data = await Complaints.findById(id);
+        const _id = req.params.id; // Assuming id is in params, not _id
+        
+        const data = await Complaints.findById(_id);
 
         if (!data) {
             return res.status(404).json({ error: 'Complaint not found' });
