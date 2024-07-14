@@ -179,9 +179,9 @@ const EnquiryStatus = async (req, res) => {
 
 const ViewSingleEnquiries = async (req, res) => {
     try {
-        const  _id  = req.params.id; // Assuming id is in params, not _id
+        const  enquiryId  = req.params.id; // Assuming id is in params, not _id
 
-        const data = await Enquiries.findById(_id);
+        const data = await Enquiries.findById({enquiryId:enquiryId});
 
         if (!data) {
             return res.status(404).json({ error: 'Enquiry not found' });
