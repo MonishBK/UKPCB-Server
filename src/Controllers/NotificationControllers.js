@@ -118,6 +118,19 @@ const deleteNotification = async (req, res) => {
 };
 
 
+const ViewSingleNotification = async (req, res) => {
+    try {
+        const _id = req.params.id;
+        
+        // Find and sort the main menu items by the 'order' field
+        const data = await File.findById(_id);
+
+        res.status(200).json({ data });
+    } catch (error) {
+        return res.status(500).json({ error: "Oops, something went wrong" });
+    }
+};
+
 const ViewNotifications = async (req, res) => {
     try {
         // Find and sort the main menu items by the 'order' field
@@ -129,4 +142,4 @@ const ViewNotifications = async (req, res) => {
     }
 };
 
-  module.exports = {addNotification, deleteNotificationFiles, deleteNotification, ViewNotifications}
+  module.exports = {addNotification, deleteNotificationFiles, deleteNotification, ViewSingleNotification, ViewNotifications}

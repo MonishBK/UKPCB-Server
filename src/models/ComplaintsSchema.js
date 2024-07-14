@@ -24,6 +24,10 @@ const actionNoteSchema = new mongoose.Schema({
     note: {
         type: String,
         trim: true,
+    },
+    date: {
+        type: String,
+        trim: true,
     }
 },{ timestamps: true } );
 

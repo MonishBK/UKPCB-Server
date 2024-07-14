@@ -80,23 +80,49 @@ const updateEnquiriesRespondedDate = async (req, res) => {
     }
 };
 
+// const updateEnquiryNote = async (req, res) => {
+//     try {
+//         const { _id, actions } = req.body;
+//         console.log(_id, actions);
+
+//         // Update the action_notes array by adding the new action note to the beginning
+//         const data = await Enquiries.findByIdAndUpdate(
+//             _id,
+//             { $push: { action_notes: { $each: [actions], $position: 0 } } },
+//             { new: true }
+//         );
+
+//         if (!data) {
+//             return res.status(404).json({ message: "Enquiries not found" });
+//         }
+
+//         res.status(200).json(data); // Send the updated document back to the client
+
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ error: 'Oops, something went wrong' });
+//     }
+// };
+
 const updateEnquiryNote = async (req, res) => {
     try {
         const { _id, actions } = req.body;
+        
 
         const data = await Enquiries.findByIdAndUpdate(
             _id,
-            { $unshift : { action_notes: actions } },
+            { $push : { action_notes: actions} },
             { new: true }
         );
 
         if (!data) {
-            return res.status(404).json({ message: "Complaint not found" });
+            return res.status(404).json({ message: "Enquiry not found" });
         }
 
+        res.status(200).json({ message: "Action note updated successfully" });
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: 'Oops some thing went wrong' });
+        console.error(err);
+        res.status(500).json({ error: 'Oops, something went wrong' });
     }
 };
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const Authenticate = require("../middlewares/authenticate");
 const {upload} = require('../middlewares/uploadFiles')
 
-const {addNotification, deleteNotificationFiles, deleteNotification, ViewNotifications} = require('../Controllers/NotificationControllers')
+const {addNotification, deleteNotificationFiles, deleteNotification, ViewSingleNotification, ViewNotifications} = require('../Controllers/NotificationControllers')
 
 
 // Add Notification
@@ -14,6 +14,9 @@ router.delete('/delete-notification-files', Authenticate, deleteNotificationFile
 
 // delete notification
 router.delete('/delete-notification', Authenticate, deleteNotification);
+
+// fetch single notifications
+router.get('/fetch-single-notification/:id', ViewSingleNotification);
 
 // fetch notifications
 router.get('/fetch-notifications', ViewNotifications);

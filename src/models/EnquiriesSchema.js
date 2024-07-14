@@ -24,8 +24,12 @@ const actionNoteSchema = new mongoose.Schema({
     note: {
         type: String,
         trim: true,
-    }
-},{ timestamps: true } );
+    },
+    date: {
+        type: String,
+        trim: true,
+    },
+});
 
 
 const enquiriesSchema = new mongoose.Schema({

@@ -88,7 +88,7 @@ const updateComplaintsNote = async (req, res) => {
 
         const data = await Complaints.findByIdAndUpdate(
             _id,
-            { $unshift : { action_notes: actions } },
+            { $push : { action_notes: actions } },
             { new: true }
         );
 
