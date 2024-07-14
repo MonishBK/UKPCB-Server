@@ -12,7 +12,7 @@ const addMedia = async (req, res) => {
             return res.status(400).json({ error: 'No files were uploaded.' });
         }
 
-        const { name, description } = req.body;
+        const { name, description, eventDate } = req.body;
         let files = [];
 
         // Process each uploaded file
@@ -46,7 +46,7 @@ const addMedia = async (req, res) => {
         }
 
         // Create a new Media document
-        const media = new Media({ name, description, data: files });
+        const media = new Media({ name, description, eventDate, data: files });
         await media.save();
 
         res.status(201).json({ message: "Media added successfully" });

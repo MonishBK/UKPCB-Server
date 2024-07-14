@@ -25,6 +25,10 @@ const mediaSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    eventDate: {
+        type: String,
+        trim: true,
+    },
     data: [mediaDataSchema],
 },{ timestamps: true } );
 
