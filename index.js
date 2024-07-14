@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 const corsOptions = {
-        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
+        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173", `${/https:\/\/uk-pollution-control-board(-git-[\w-]+)?\.vercel\.app/}`],
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
         credentials: true
   };
