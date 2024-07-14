@@ -37,7 +37,7 @@ const validExtensions = {
   
   const upload = multer({
     storage: storage,
-    limits: { fileSize: 1000000 }
+    limits: { fileSize: 10000000 }
   });
 
 

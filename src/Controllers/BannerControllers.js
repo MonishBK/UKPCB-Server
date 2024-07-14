@@ -33,7 +33,7 @@ const validExtensions = {
 
         const mediaData = new Banner({ name, href, type:fileType });
         await mediaData.save()
-        res.status(201).json({ message: "Added successfully" });
+        res.status(201).json({ message: "Added successfully" });  
 
     } catch (err) {
         console.log(err);
