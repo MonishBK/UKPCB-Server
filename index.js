@@ -16,14 +16,7 @@ app.use(express.json());
 
 
 const corsOptions = {
-        // origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
-        origin: (origin, callback) => {
-            if (allowedOrigins.indexOf(origin) !== -1) {
-              callback(null, true);
-            } else {
-              callback(new Error('Not allowed by CORS'));
-            }
-          },
+        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
         credentials: true
   };
