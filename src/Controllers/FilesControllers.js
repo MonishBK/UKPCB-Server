@@ -106,7 +106,7 @@ const ViewFiles = async (req, res) => {
   
       // Check if path is provided
       if (!path) {
-        return res.status(400).json({ error: "Path parameter is required" });
+        return res.status(200).json({ message: "no data please provide path" });
       }
   
       // Define filters based on query parameters
