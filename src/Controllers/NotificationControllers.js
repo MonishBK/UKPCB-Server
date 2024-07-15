@@ -108,7 +108,7 @@ const deleteNotification = async (req, res) => {
         }
 
         // Delete the notification document from MongoDB
-        await File.findByIdAndDelete(_id);
+        await Notification.findByIdAndDelete(_id);
 
         res.status(200).json({ message: 'Notification and associated files deleted successfully' });
     } catch (err) {
