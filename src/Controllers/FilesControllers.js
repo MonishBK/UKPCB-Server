@@ -104,13 +104,16 @@ const ViewFiles = async (req, res) => {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
   
+      // Check if path is provided
+      if (!path) {
+        return res.status(400).json({ error: "Path parameter is required" });
+      }
+  
       // Define filters based on query parameters
       const filters = {};
   
       // Add filter by path if provided
-      if (path) {
-        filters.path = { $in: path.split(",") }; // Handle multiple paths
-      }
+      filters.path = { $in: path.split(",") }; // Handle multiple paths
   
       // Add filter by name if provided
       if (name) {
@@ -150,11 +153,6 @@ const ViewFiles = async (req, res) => {
         },
       ];
   
-      // If no parameters are provided, modify the aggregate pipeline to avoid empty $match stage
-      if (!path && !name && !startDate && !endDate) {
-        aggregatePipeline.splice(1, 1); // Remove the $match stage
-      }
-  
       // Find and sort the files by the 'createdAt' field in fileDataSchema, and apply pagination
       const data = await File.aggregate(aggregatePipeline);
   
@@ -164,10 +162,6 @@ const ViewFiles = async (req, res) => {
         { $match: filters },
         { $count: "total" },
       ];
-  
-      if (!path && !name && !startDate && !endDate) {
-        totalAggregatePipeline.splice(1, 1); // Remove the $match stage
-      }
   
       const total = await File.aggregate(totalAggregatePipeline);
   
