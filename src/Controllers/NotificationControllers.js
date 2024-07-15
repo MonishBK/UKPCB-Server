@@ -12,7 +12,7 @@ const {validExtensions}= require('../middlewares/uploadFiles')
             return res.status(400).json({ error: 'No files were uploaded.' });
         }
   
-        // console.log("Files Uploaded successfully:", uploadedFiles); 
+        console.log("Files Uploaded successfully:", uploadedFiles); 
         const { Module, title, Publish_Date, names } = req.body;
         let files = []
 
@@ -31,7 +31,7 @@ const {validExtensions}= require('../middlewares/uploadFiles')
 
             const fileFormat = {
                 name: names[ind],
-                href:`/assets/${fileType}/${uploadedFiles.filename}`,
+                href:`/assets/${fileType}/${ele.filename}`,
                 type: fileType
             }
 
