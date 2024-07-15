@@ -1,4 +1,4 @@
-const File = require('../models/FileSchema')
+const Notification = require('../models/NotificationSchema')
 const fs = require('fs/promises'); // Using promises-based fs module
 const path = require('path');
 const {validExtensions}= require('../middlewares/uploadFiles')
@@ -41,7 +41,7 @@ const {validExtensions}= require('../middlewares/uploadFiles')
 
 
         
-        const data = new File({ Module, title, Publish_Date, files });
+        const data = new Notification({ Module, title, Publish_Date, files });
         await data.save()
         res.status(201).json({ message: "Added successfully" });
 
@@ -56,7 +56,7 @@ const deleteNotificationFiles = async (req, res) => {
         const { _id, fileHrefs } = req.body;
 
         // Find the document by _id
-        const notificationDoc = await File.findById(_id);
+        const notificationDoc = await Notification.findById(_id);
 
         if (!notificationDoc) {
             return res.status(404).json({ error: "Notification not found" });
@@ -95,7 +95,7 @@ const deleteNotification = async (req, res) => {
         const { _id } = req.body;
 
         // Find the document by _id
-        const notificationDoc = await File.findById(_id);
+        const notificationDoc = await Notification.findById(_id);
 
         if (!notificationDoc) {
             return res.status(404).json({ error: "Notification not found" });
@@ -123,7 +123,7 @@ const ViewSingleNotification = async (req, res) => {
         const _id = req.params.id;
         
         // Find and sort the main menu items by the 'order' field
-        const data = await File.findById(_id);
+        const data = await Notification.findById(_id);
 
         res.status(200).json({ data });
     } catch (error) {
@@ -134,7 +134,7 @@ const ViewSingleNotification = async (req, res) => {
 const ViewNotifications = async (req, res) => {
     try {
         // Find and sort the main menu items by the 'order' field
-        const data = await File.find().sort({ createdAt: -1 });
+        const data = await Notification.find().sort({ createdAt: -1 });
 
         res.status(200).json({ data });
     } catch (error) {
