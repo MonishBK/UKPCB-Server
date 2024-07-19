@@ -16,7 +16,15 @@ app.use(express.json());
 
 
 const corsOptions = {
-        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
+        // origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
+        origin: (origin, callback) => {
+            const allowedOrigins = ['https://*.vercel.app', 'http://localhost:5173'];
+            if (allowedOrigins.some(pattern => new RegExp(pattern).test(origin))) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
         credentials: true
   };
@@ -35,6 +43,7 @@ app.use("/api/enquiries",require('./src/Routes/enquiriesRoutes'));
 app.use("/api/complaints",require('./src/Routes/complaintsRoutes'));
 app.use("/api/media",require('./src/Routes/mediaRoutes'));
 app.use("/api/banner",require('./src/Routes/bannerRoutes'));
+app.use("/api/marquee",require('./src/Routes/marqueeRoutes'));
 
 
 app.get('/', (req, res) =>{

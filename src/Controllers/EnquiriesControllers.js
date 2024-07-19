@@ -42,7 +42,7 @@ const addEnquiries = async (req, res) => {
 
         const data = new Enquiries({ subject, name, email, phone, enquiry, files });
         await data.save()
-        res.status(201).json({ message: "Added successfully", EnquiryID: enquiryId });
+        res.status(201).json({ message: "Added successfully", data: data });
 
     } catch (err) {
         console.log(err);
@@ -240,33 +240,44 @@ const ViewEnquiries = async (req, res) => {
             filters.status = req.query.status;
         }
 
+        
+        // Filter by email if provided
+        if (req.query.email) {
+            filters.email = req.query.email;
+        }
+
+        // Filter by subject if provided
+        if (req.query.subject) {
+            filters.subject = req.query.subject;
+        }
+
+        // Filter by phone if provided
+        if (req.query.phone) {
+            filters.phone = req.query.phone;
+        }
+
+        // Filter by name if provided
+        if (req.query.name) {
+            filters.name = { $regex: req.query.name, $options: 'i' }; // Case-insensitive and substring match
+        }
+
         // Filter by date range based on status
         if (req.query.startDate || req.query.endDate) {
+            const dateFilter = {};
+            if (req.query.startDate) {
+                dateFilter.$gte = new Date(req.query.startDate);
+            }
+            if (req.query.endDate) {
+                dateFilter.$lte = new Date(req.query.endDate);
+            }
+
             if (filters.status === 'in_progress') {
-                filters.progress_date = {};
-                if (req.query.startDate) {
-                    filters.progress_date.$gte = new Date(req.query.startDate);
-                }
-                if (req.query.endDate) {
-                    filters.progress_date.$lte = new Date(req.query.endDate);
-                }
+                filters.progress_date = dateFilter;
             } else if (filters.status === 'resolved') {
-                filters.resolve_date = {};
-                if (req.query.startDate) {
-                    filters.resolve_date.$gte = new Date(req.query.startDate);
-                }
-                if (req.query.endDate) {
-                    filters.resolve_date.$lte = new Date(req.query.endDate);
-                }
+                filters.resolve_date = dateFilter;
             } else {
-                // For status 'new'
-                filters.createdAt = {};
-                if (req.query.startDate) {
-                    filters.createdAt.$gte = new Date(req.query.startDate);
-                }
-                if (req.query.endDate) {
-                    filters.createdAt.$lte = new Date(req.query.endDate);
-                }
+                // For status 'new' or unspecified status
+                filters.createdAt = dateFilter;
             }
         }
 

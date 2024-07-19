@@ -5,46 +5,43 @@ const {validExtensions}= require('../middlewares/uploadFiles')
 
 
   const addRecentUpdate = async (req, res) => {
+    const uploadedFiles = req.file;
+    
     try {
-        const uploadedFiles = req.files;
         
-        if (!uploadedFiles || uploadedFiles.length === 0) {
+        if(uploadedFiles){
+            const { Module, title, custom_file_name} = req.body;
+            
+            const fileExtension = uploadedFiles.originalname.split('.').pop().toLowerCase();
+                let fileType = null;
+          
+                // Find the file type based on the extension
+                for (const [type, extensions] of Object.entries(validExtensions)) {
+                    if (extensions.includes(fileExtension)) {
+                        fileType = type;
+                        break;
+                    }
+                }
+    
+                const file_data = {
+                    custom_file_name: custom_file_name,
+                    href: `/assets/${fileType}/${uploadedFiles.filename}`,
+                    type: fileType
+                }
+    
+                const data = new RecentUpdate({Module: Module, title:title, files: file_data});
+        
+                // Save the updated or new document
+                await data.save();
+        
+                res.status(201).json({ message: 'Success!!' });
+        }else{
             return res.status(400).json({ error: 'No files were uploaded.' });
         }
-  
-        console.log("Files Uploaded successfully:", uploadedFiles); 
-        const { Module, title, Publish_Date, names } = req.body;
-        let files = []
-
-        uploadedFiles.map((ele, ind) => {
-            
-            const fileExtension = ele.originalname.split('.').pop().toLowerCase();
-            let fileType = null;
-      
-            // Find the file type based on the extension
-            for (const [type, extensions] of Object.entries(validExtensions)) {
-                if (extensions.includes(fileExtension)) {
-                    fileType = type;
-                    break;
-                }
-            }
-
-            const fileFormat = {
-                name: names[ind],
-                href:`/assets/${fileType}/${ele.filename}`,
-                type: fileType
-            }
-
-            files.push(fileFormat)
-
-        })
-
-        const data = new RecentUpdate({ Module, title, Publish_Date, files });
-        await data.save()
-        res.status(201).json({ message: "Added successfully" });
 
     } catch (err) {
         console.log(err);
+        fs.unlink(uploadedFiles.path);
         res.status(500).json({ error: 'Oops some thing went wrong' });
     }
 };

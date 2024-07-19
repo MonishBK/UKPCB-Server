@@ -196,37 +196,3 @@ const ViewFiles = async (req, res) => {
   };
 
   module.exports = {addFiles, deleteFile, ViewFiles}
-
-
-
-//   try {
-//     const { newPDF, category } = req.body;
-
-//     // Check if newPDF contains a promise or unresolved asynchronous data
-//     if (typeof newPDF === 'object' && newPDF.then) {
-//       // Resolve the promise if it exists
-//       newPDF = await newPDF;
-//       // console.log(newPDF);
-//   }
-  
-//   // console.log("pdf=> ",newPDF);
-//     console.log(typeof newPDF === 'object' && newPDF.then)
-
-//     // Read the existing data from the file
-//     const fileData = fs.readFileSync(path.join(__dirname, '..', 'JsonFiles', 'PDFjson.json'), 'utf-8');
-//     const jsonData = JSON.parse(fileData);
-
-//     // Apply your updates to the data
-//     jsonData[category].unshift(newPDF);
-
-//     // Write the updated data back to the file
-//     fs.writeFileSync(path.join(__dirname, '..', 'JsonFiles', 'PDFjson.json'), JSON.stringify(jsonData, null, 2));
-
-//     // Log a message to confirm that the file has been updated
-//     console.log('File updated successfully');
-//     res.status(201).json({ message: 'success!!' });
-
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ error: err.message });
-//   }

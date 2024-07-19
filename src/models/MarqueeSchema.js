@@ -12,18 +12,18 @@ const fileDataSchema = new mongoose.Schema({
     type: {
         type: String,
         trim: true,
-    },
-},{ timestamps: true } );
+    }
+});
 
-const fileSchema = new mongoose.Schema({
-    path: {
+const marqueeSchema = new mongoose.Schema({
+    marquee_title: {
         type: String,
         required: true,
         trim: true,
     },
-    data: [fileDataSchema]
-},{ timestamps: true } );
+    file_data: fileDataSchema
+},{ timestamps: true });
 
-const File = mongoose.model('FILE', fileSchema);
+const Marquee = mongoose.model('MARQUEE', marqueeSchema);
 
-module.exports = File;
+module.exports = Marquee;

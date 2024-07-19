@@ -96,7 +96,7 @@ complaintsSchema.pre('save', async function (next) {
                 const lastNumber = parseInt(lastComplaint.complaintId.substring(7)); // Extract numeric part
                 count = lastNumber + 1;
             }
-            this.complaintId = `UKPCBCO${count.toString().padStart(3, '0')}`;
+            this.complaintId = `UKPCBCP${count.toString().padStart(3, '0')}`;
         }
         next();
     } catch (error) {

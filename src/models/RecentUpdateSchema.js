@@ -29,11 +29,6 @@ const RecentUpdateSchema = new mongoose.Schema({
       required: true,
       trim:true,
     },
-    Publish_Date: {
-      type: String,
-      required: true,
-      trim:true,
-    },
     files: [fileDataSchema],
        
   },{ timestamps: true } );
