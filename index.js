@@ -30,6 +30,7 @@ app.use("/api/user",require('./src/Routes/userRoutes'));
 app.use("/api/menus",require('./src/Routes/menuRoutes'));
 app.use("/api/filesUpload",require('./src/Routes/fileRoutes'));
 app.use("/api/notifications",require('./src/Routes/notificationRoutes'));
+app.use("/api/recent-update",require('./src/Routes/recentUpdateRoutes'));
 app.use("/api/enquiries",require('./src/Routes/enquiriesRoutes'));
 app.use("/api/complaints",require('./src/Routes/complaintsRoutes'));
 app.use("/api/media",require('./src/Routes/mediaRoutes'));

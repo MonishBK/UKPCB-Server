@@ -1,5 +1,5 @@
 const Media = require('../models/MediaSchema')
-const fs = require('fs/promises'); // Using promises-based fs module
+const fs = require('fs/promises');
 const path = require('path');
 const {validExtensions} = require('../middlewares/uploadFiles')
 
@@ -236,13 +236,16 @@ const ViewSingleMedia = async (req, res) => {
 
 const ViewMedia = async (req, res) => {
     try {
-        const { startDate, endDate } = req.query;
+        const { event_name, startDate, endDate } = req.query;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        // Build query with optional date range filter
+        // Build query with optional filters
         const query = {};
+        if (event_name) {
+            query.name = { $regex: new RegExp(event_name, 'i') }; // Case-insensitive regex search
+        }
         if (startDate && endDate) {
             query.createdAt = {
                 $gte: new Date(startDate),
