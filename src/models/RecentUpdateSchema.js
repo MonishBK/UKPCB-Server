@@ -39,7 +39,7 @@ const RecentUpdateSchema = new mongoose.Schema({
   },{ timestamps: true } );
 
   // collection creation
-const RecentUpdate = mongoose.model("NOTIFICATION", RecentUpdateSchema);
+const RecentUpdate = mongoose.model("RECENTUPDATE", RecentUpdateSchema);
 // const Verify = mongoose.model("VERIFY", VerifySchema);
 
 // exporting the modules
