@@ -18,8 +18,16 @@ app.use(express.json());
 const corsOptions = {
         // origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
         origin: (origin, callback) => {
-            const allowedOrigins = ['https://*.vercel.app', 'http://localhost:5173'];
-            if (allowedOrigins.some(pattern => new RegExp(pattern).test(origin))) {
+            const allowedDomains = [
+                "https://uk-pollution-control-board.vercel.app",
+                "http://localhost:5173"
+            ];
+    
+            // Allow all subdomains of vercel.app
+            const isAllowedDomain = allowedDomains.some(domain => origin && origin.startsWith(domain)) ||
+                (origin && /https:\/\/.*\.vercel\.app/.test(origin)); // Regex to match all Vercel subdomains
+    
+            if (isAllowedDomain) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
