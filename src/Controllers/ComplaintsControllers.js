@@ -30,8 +30,8 @@ const addComplaints = async (req, res) => {
                 }
     
                 const fileFormat = {
-                    name: uploadedFiles.filename,
-                    href:`/assets/${fileType}/${uploadedFiles.filename}`,
+                    name: ele.filename,
+                    href:`/assets/${fileType}/${ele.filename}`,
                     type: fileType
                 }
     
