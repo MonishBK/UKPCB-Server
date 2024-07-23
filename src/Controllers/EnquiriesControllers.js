@@ -284,7 +284,8 @@ const ViewEnquiries = async (req, res) => {
         // Apply filters and pagination
         const data = await Enquiries.find(filters)
                                     .skip(skip)
-                                    .limit(limit);
+                                    .limit(limit)
+                                    .sort({ createdAt: -1 });
         
         // Count total number of documents
         const total = await Enquiries.countDocuments(filters);

@@ -78,7 +78,7 @@ const deleteBanner = async (req, res) => {
 const ViewBanner = async (req, res) => {
     try {
         // Find and sort the main menu items by the 'order' field
-        const data = await Banner.find();
+        const data = await Banner.find().sort({ createdAt: -1 });
 
         res.status(200).json({ data });
     } catch (error) {

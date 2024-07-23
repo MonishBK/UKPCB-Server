@@ -32,7 +32,7 @@ const createMarquee = async (req, res) => {
 
 const getAllMarquees = async (req, res) => {
     try {
-        const marquees = await Marquee.find();
+        const marquees = await Marquee.find().sort({ createdAt: -1 });
         res.status(200).json({ data: marquees });
     } catch (err) {
         console.error(err);

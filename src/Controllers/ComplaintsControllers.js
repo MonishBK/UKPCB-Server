@@ -261,7 +261,8 @@ const ViewComplaints = async (req, res) => {
         // Apply filters and pagination
         const data = await Complaints.find(filters)
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .sort({ createdAt: -1 });
 
         // Count total number of documents
         const total = await Complaints.countDocuments(filters);
