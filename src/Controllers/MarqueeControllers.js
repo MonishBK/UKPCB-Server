@@ -1,5 +1,7 @@
 const Marquee = require('../models/MarqueeSchema');
 const {validExtensions} = require('../middlewares/uploadFiles')
+const fs = require('fs/promises'); // Using promises-based fs module
+const path = require('path');
 
 const createMarquee = async (req, res) => {
     try {
@@ -70,13 +72,11 @@ const deleteMarquee = async (req, res) => {
             return res.status(404).json({ error: 'Marquee not found' });
         }
 
-        // Delete associated files from the server
-        marquee.file_data.forEach(file => {
-            const filePath = path.join(__dirname, '../public/assets/marquee', path.basename(file.href));
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        });
+
+        // Delete the file from the server
+        const serverFilePath = path.join(__dirname, '../..', 'public', 'assets', marquee.file_data.type, path.basename(marquee.file_data.href));
+        await fs.unlink(serverFilePath);
+
 
         await Marquee.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: "Marquee deleted successfully" });
