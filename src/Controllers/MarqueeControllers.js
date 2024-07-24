@@ -1,4 +1,5 @@
 const Marquee = require('../models/MarqueeSchema');
+const {validExtensions} = require('../middlewares/uploadFiles')
 
 const createMarquee = async (req, res) => {
     try {
@@ -9,7 +10,15 @@ const createMarquee = async (req, res) => {
         if (req.file) {  // Use req.file if handling one file
             const file = req.file;
             const fileExtension = file.originalname.split('.').pop().toLowerCase();
-            const fileType = file.mimetype.split('/')[0]; // Extract file type (e.g., image, video)
+            let fileType = null;
+
+             // Find the file type based on the extension
+             for (const [type, extensions] of Object.entries(validExtensions)) {
+                if (extensions.includes(fileExtension)) {
+                    fileType = type;
+                    break;
+                }
+            }
 
             fileData = {
                 name: custom_name,
