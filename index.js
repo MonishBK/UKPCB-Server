@@ -57,6 +57,7 @@ app.use("/api/complaints",require('./src/Routes/complaintsRoutes'));
 app.use("/api/media",require('./src/Routes/mediaRoutes'));
 app.use("/api/banner",require('./src/Routes/bannerRoutes'));
 app.use("/api/marquee",require('./src/Routes/marqueeRoutes'));
+app.use("/api/statistics",require('./src/Routes/statisticsRoutes'));
 
 
 app.get('/', (req, res) =>{
