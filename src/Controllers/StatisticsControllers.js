@@ -13,10 +13,10 @@ const Statistics = async (req, res) =>{
         const totalFiles = await File.countDocuments();
 
         // Total PDF files uploaded
-        const totalPdfFiles = await File.countDocuments({ 'files.type': 'application/pdf' });
+        const totalPdfFiles = await File.countDocuments({ 'data.type': 'PDF' });
 
         // Total Excel files uploaded
-        const totalExcelFiles = await File.countDocuments({ 'files.type': 'Excel' });
+        const totalExcelFiles = await File.countDocuments({ 'data.type': 'Excel' });
 
         // Total events
         const totalEvents = await Media.countDocuments();
