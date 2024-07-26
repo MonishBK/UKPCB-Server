@@ -30,7 +30,7 @@ const createMarquee = async (req, res) => {
         }
 
         // Create new Marquee document
-        const marquee = new Marquee({ marquee_title, file_data: fileData });
+        const marquee = new Marquee({ marquee_title: marquee_title, file_data: fileData });
         await marquee.save();
 
         res.status(201).json({ message: "Marquee created successfully", data: marquee });
