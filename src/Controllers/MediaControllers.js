@@ -218,9 +218,9 @@ const deleteEventMedia = async (req, res) => {
     
 const ViewSingleMedia = async (req, res) => {
     try {
-        const { id } = req.params; // Assuming id is in params, not _id
+        const { _id } = req.params; 
 
-        const data = await Media.findById(id);
+        const data = await Media.findById(_id);
 
         if (!data) {
             return res.status(404).json({ error: 'Media not found' });

@@ -20,7 +20,7 @@ router.delete('/delete-media-file', Authenticate, deleteMedia);
 router.delete('/delete-media-event', Authenticate, deleteEventMedia);
 
 // fetch single files
-router.get('/fetch-single-media', ViewSingleMedia);
+router.get('/fetch-single-media/:_id', ViewSingleMedia);
 
 // fetch files
 router.get('/fetch-media', ViewMedia);
