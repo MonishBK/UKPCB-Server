@@ -98,101 +98,98 @@ const deleteFile = async (req, res) => {
 
 
 const ViewFiles = async (req, res) => {
-    try {
-      const { path, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
-  
-      // Check if path is provided
-      if (!path) {
-        return res.status(200).json({ message: "no data please provide path" });
-      }
-  
-      // Define filters based on query parameters
-      const filters = {};
-  
-      // Add filter by path if provided
+  try {
+    const { path, name, startDate, endDate } = req.query; // Assuming path, name, startDate, endDate are passed as query parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Define filters based on query parameters
+    const filters = {};
+
+    // Add filter by path if provided
+    if (path) {
       filters.path = { $in: path.split(",") }; // Handle multiple paths
-  
-      // Add filter by name if provided
-      if (name) {
-        filters["data.name"] = { $regex: new RegExp(name, "i") }; // Case-insensitive search
-      }
-  
-      // Add date range filter if startDate and/or endDate are provided
-      if (startDate || endDate) {
-        filters["data.createdAt"] = {};
-        if (startDate) {
-          filters["data.createdAt"].$gte = new Date(startDate);
-        }
-        if (endDate) {
-          filters["data.createdAt"].$lte = new Date(endDate);
-        }
-      }
-  
-      // Aggregate query
-      const aggregatePipeline = [
-        { $unwind: "$data" },
-        { $match: filters },
-        { $sort: { "data.createdAt": -1 } }, // Sort by createdAt in descending order
-        { $skip: skip },
-        { $limit: limit },
-        {
-          $group: {
-            _id: "$path", // Group by path
-            data: { $push: "$data" },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            filePath: "$_id", // Rename _id to filePath for clarity
-            data: 1,
-          },
-        },
-      ];
-  
-      // Find and sort the files by the 'createdAt' field in fileDataSchema, and apply pagination
-      const data = await File.aggregate(aggregatePipeline);
-  
-      // Count total number of documents matching the filters
-      const totalAggregatePipeline = [
-        { $unwind: "$data" },
-        { $match: filters },
-        { $count: "total" },
-      ];
-  
-      const total = await File.aggregate(totalAggregatePipeline);
-  
-      // Calculate pagination details
-      const totalCount = total.length > 0 ? total[0].total : 0;
-      const totalPages = Math.ceil(totalCount / limit);
-      const nextPage = page < totalPages ? page + 1 : null;
-      const hasNextPage = page < totalPages;
-      const hasPreviousPage = page > 1;
-  
-      // Format response
-      const formattedData = data.length > 0 ? {
-        filePath: data[0].filePath,
-        data: data[0].data,
-      } : null;
-  
-      res.status(200).json({
-        data: formattedData,
-        pagination: {
-          total: totalCount,
-          totalPages,
-          nextPage,
-          hasNextPage,
-          hasPreviousPage,
-          limit,
-        },
-      });
-    } catch (error) {
-      console.error("Error in ViewFiles:", error);
-      return res.status(500).json({ error: "Oops, something went wrong" });
     }
-  };
+
+    // Add filter by name if provided
+    if (name) {
+      filters["data.name"] = { $regex: new RegExp(name, "i") }; // Case-insensitive search
+    }
+
+    // Add date range filter if startDate and/or endDate are provided
+    if (startDate || endDate) {
+      filters["data.createdAt"] = {};
+      if (startDate) {
+        filters["data.createdAt"].$gte = new Date(startDate);
+      }
+      if (endDate) {
+        filters["data.createdAt"].$lte = new Date(endDate);
+      }
+    }
+
+    // Aggregate query
+    const aggregatePipeline = [
+      { $unwind: "$data" },
+      { $match: filters },
+      { $sort: { "data.createdAt": -1 } }, // Sort by createdAt in descending order
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $group: {
+          _id: "$path", // Group by path
+          data: { $push: "$data" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          path: "$_id", // Rename _id to path for clarity
+          data: 1,
+        },
+      },
+    ];
+
+    // Find and sort the files by the 'createdAt' field in fileDataSchema, and apply pagination
+    const data = await File.aggregate(aggregatePipeline);
+
+    // Count total number of documents matching the filters
+    const totalAggregatePipeline = [
+      { $unwind: "$data" },
+      { $match: filters },
+      { $count: "total" },
+    ];
+
+    const total = await File.aggregate(totalAggregatePipeline);
+
+    // Calculate pagination details
+    const totalCount = total.length > 0 ? total[0].total : 0;
+    const totalPages = Math.ceil(totalCount / limit);
+    const nextPage = page < totalPages ? page + 1 : null;
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    // Format response
+    const formattedData = data.map(item => ({
+      path: item.path,
+      data: item.data,
+    }));
+
+    res.status(200).json({
+      data: formattedData,
+      pagination: {
+        total: totalCount,
+        totalPages,
+        nextPage,
+        hasNextPage,
+        hasPreviousPage,
+        limit,
+      },
+    });
+  } catch (error) {
+    console.error("Error in ViewFiles:", error);
+    return res.status(500).json({ error: "Oops, something went wrong" });
+  }
+};
 
   module.exports = {addFiles, deleteFile, ViewFiles}
