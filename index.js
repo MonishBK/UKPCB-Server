@@ -35,14 +35,16 @@ const corsOptions = {
         //     }
         // },
 
-        origin: (origin, callback) => {
-            callback(null, true); // Allow all origins temporarily for debugging
-        },
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-        credentials: true
+        // origin: (origin, callback) => {
+        //     callback(null, true); // Allow all origins temporarily for debugging
+        // },
+        // methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+        // credentials: true
+
   };
   
-app.use(cors(corsOptions)); 
+// app.use(cors(corsOptions)); 
+app.options("*", cors());
 
 app.use(cookieParser()); 
 
