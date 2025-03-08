@@ -16,7 +16,7 @@ app.use(express.json());
 
 
 const corsOptions = {
-        // origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
+        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
 
         // origin: (origin, callback) => {
         //     const allowedDomains = [
@@ -43,8 +43,7 @@ const corsOptions = {
 
   };
   
-// app.use(cors(corsOptions)); 
-app.options("*", cors());
+app.use(cors(corsOptions)); 
 
 app.use(cookieParser()); 
 
