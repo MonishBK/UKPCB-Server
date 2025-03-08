@@ -16,10 +16,10 @@ app.use(express.json());
 
 
 const corsOptions = {
-        origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-        allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true, // If using cookies or authentication
+        // origin: ["https://uk-pollution-control-board.vercel.app","http://localhost:5173"],
+        // methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+        // allowedHeaders: ["Content-Type", "Authorization"],
+        // credentials: true, // If using cookies or authentication
 
         // origin: (origin, callback) => {
         //     const allowedDomains = [
@@ -38,29 +38,15 @@ const corsOptions = {
         //     }
         // },
 
-        // origin: (origin, callback) => {
-        //     callback(null, true); // Allow all origins temporarily for debugging
-        // },
-        // methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-        // credentials: true
+        origin: (origin, callback) => {
+            callback(null, true); // Allow all origins temporarily for debugging
+        },
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+        credentials: true
 
   };
   
 app.use(cors(corsOptions)); 
-
-// Explicitly set headers manually (important)
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    next();
-  });
-  
-  // Handle Preflight Requests
-  app.options("*", (req, res) => {
-    res.sendStatus(204);
-  });
 
 app.use(cookieParser()); 
 
