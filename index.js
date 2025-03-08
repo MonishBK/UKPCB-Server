@@ -48,6 +48,20 @@ const corsOptions = {
   
 app.use(cors(corsOptions)); 
 
+// Explicitly set headers manually (important)
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    next();
+  });
+  
+  // Handle Preflight Requests
+  app.options("*", (req, res) => {
+    res.sendStatus(204);
+  });
+
 app.use(cookieParser()); 
 
 //linking the router files to make our route easily 
